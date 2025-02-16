@@ -1,3 +1,4 @@
+// #define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
 #include <vector>
 #include <cstdlib>
@@ -68,7 +69,7 @@ void render(SDL_Renderer *renderer)
     printf("Rendering frame...\n");
 }
 
-int main()
+int main(int argc, char *args[])
 {
     // Initialize SDL
     SDL_Init(SDL_INIT_VIDEO);
