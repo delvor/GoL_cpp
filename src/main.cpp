@@ -4,6 +4,7 @@
 #include <ctime>
 #include <string>
 #include "ui/Button.h"
+#include <iostream>
 
 // Window and grid settings
 const int WINDOW_WIDTH = 800;
@@ -54,7 +55,10 @@ int main(int argc, char *args[])
     TTF_Font *font = loadFont();
     if (!font)
     {
-        printf("Error loading font: %s\n", TTF_GetError());
+
+        std::cerr << "Error loading font: %s\n"
+                  << TTF_GetError() << std::endl;
+        // printf("Error loading font: %s\n", TTF_GetError());
         return -1;
     }
     SDL_Event event;
@@ -324,7 +328,9 @@ TTF_Font *loadFont()
     TTF_Font *font = TTF_OpenFont(fontPath, 24);
     if (!font)
     {
-        printf("Error loading font: ", TTF_GetError());
+        std::cerr << "Error loading font: %s\n"
+                  << TTF_GetError() << std::endl;
+        // printf("Error loading font: ", TTF_GetError());
         return nullptr;
     }
     return font;
