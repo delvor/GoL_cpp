@@ -23,7 +23,7 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Install Dependencies
-      run: sudo apt-get update && sudo apt-get install -y libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev g++ libasound2-dev
+      run: sudo apt-get update && sudo apt-get install -y libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev g++
 
     - name: Set C++ Compiler to g++
       run: export CXX=$(which g++)
@@ -43,11 +43,7 @@ jobs:
       
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} 
 
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
-
-
-
-
+  
 
     - name: Build
       # Build your program with the given configuration
