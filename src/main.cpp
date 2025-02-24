@@ -1,6 +1,6 @@
 #include <SDL2/SDL_ttf.h>
 #include <ctime>
-#include "main_func.h"
+#include "func/func.h"
 #include <iostream>
 
 

@@ -1,7 +1,7 @@
-#ifndef MAIN_FUNC_H
-#define MAIN_FUNC_H
+#ifndef FUNC_H
+#define FUNC_H
 
-#include "ui/Button.h"
+#include "../ui/Button.h"
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_ttf.h>
@@ -57,4 +57,4 @@ bool randomizeGrid();
 TTF_Font *loadFont();
 
 
-#endif // MAIN_FUNC_H
+#endif // FUNC_H

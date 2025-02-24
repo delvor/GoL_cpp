@@ -1,5 +1,5 @@
-#include "main_func.h"
-#include "ui/Button.h"
+#include "func.h"
+#include "../ui/Button.h"
 #include <ctime>
 #include <iostream>
 #include <ostream>
