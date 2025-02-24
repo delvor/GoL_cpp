@@ -57,14 +57,14 @@ message(STATUS "Other SDL2 include: ${SDL2_OTHER_CFLAGS}")
 message(STATUS "Other SDL2 Libraries List: ${SDL2_OTHER_LIBS}")
 
 # Source files
-set(SOURCE_FILES src/main.cpp src/ui/Button.cpp src/func/func.cpp)
-set(HEADER_FILES src/ui/Button.h src/func/func.h)
+set(SOURCE_FILES src/main.cpp src/ui/Button.cpp src/game/gol.cpp )
+set(HEADER_FILES src/ui/Button.h src/game/gol.h )
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE}}")
 #set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}")
 
 # Create executable
-add_executable(GameOfLife ${SOURCE_FILES} ${HEADER_FILES})
+add_executable(GameOfLife ${SOURCE_FILES} ${HEADER_FILES}  )
 
 # Extract the include directories from SDL2_CFLAGS
 string(REPLACE "-I" ";" SDL2_INCLUDE_DIRS ${SDL2_CFLAGS})

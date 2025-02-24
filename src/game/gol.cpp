@@ -1,34 +1,72 @@
-#include "func.h"
-#include "../ui/Button.h"
 #include <ctime>
 #include <iostream>
 #include <ostream>
+#include "gol.h"
 
+GameOfLife::GameOfLife()
+    : GRID_WIDTH(WINDOW_WIDTH / CELL_SIZE),
+      GRID_HEIGHT(WINDOW_HEIGHT / CELL_SIZE),
+      grid(GRID_WIDTH, std::vector<bool>(GRID_HEIGHT, false)),
+      nextGrid(GRID_WIDTH, std::vector<bool>(GRID_HEIGHT, false)),
+      buttons{
+          {{10, 10, 100, 30}, "Pause", [this]()
+           { return togglePause(); }},
+          {{120, 10, 100, 30}, "Clear", [this]()
+           { return clearGrid(); }},
+          {{230, 10, 100, 30}, "Randomize", [this]()
+           { return randomizeGrid(); }},
+      }
+{
+    running = true;
+    paused = false;
+    zoom = 1.0f;
+    offsetX = offsetY = 0;
+    dragging = false;
+    lastMouseX = lastMouseY = 0;
+}
 
-int GRID_WIDTH = WINDOW_WIDTH / CELL_SIZE;
-int GRID_HEIGHT = WINDOW_HEIGHT / CELL_SIZE;
+int GameOfLife::run()
+{
+    SDL_Init(SDL_INIT_VIDEO);
 
-// Game state variables
-bool running = true;
-bool paused = true;
-std::vector<std::vector<bool>> grid(GRID_WIDTH, std::vector<bool>(GRID_HEIGHT, false));
-std::vector<std::vector<bool>> nextGrid(GRID_WIDTH, std::vector<bool>(GRID_HEIGHT, false));
+    TTF_Init(); // Initialize SDL_ttf
+    SDL_Window *window = SDL_CreateWindow("Game of Life", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
+    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    TTF_Font *font = loadFont();
+    if (!font)
+    {
 
-// Camera and zoom variables
-float zoom = 1.0f;
-int offsetX = 0, offsetY = 0;
-bool dragging = false;
-int lastMouseX, lastMouseY;
+        std::cerr << "Error loading font: %s\n"
+                  << TTF_GetError() << std::endl;
+        // printf("Error loading font: %s\n", TTF_GetError());
+        return -1;
+    }
+    SDL_Event event;
 
-Button buttons[] = {
-    {{10, 10, 100, 30}, "Pause", togglePause},
-    {{120, 10, 100, 30}, "Clear", clearGrid},
-    {{230, 10, 100, 30}, "Randomize", randomizeGrid},
-    };
+    Uint32 lastUpdate = SDL_GetTicks();
+    const Uint32 updateInterval = 200;
 
+    while (running)
+    {
+        handleEvents(event);
+        Uint32 currentTime = SDL_GetTicks();
+        if (!paused && currentTime - lastUpdate >= updateInterval)
+        {
+            update();
+            lastUpdate = currentTime;
+        }
+        render(renderer, font);
+        SDL_Delay(16);
+    }
 
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
+    TTF_Quit(); // Quit SDL_ttf
+    return 0;
+}
 
-void handleEvents(SDL_Event &event)
+void GameOfLife::handleEvents(SDL_Event &event)
 {
     while (SDL_PollEvent(&event))
     {
@@ -86,7 +124,7 @@ void handleEvents(SDL_Event &event)
     }
 }
 
-void handleMouseMotion(SDL_Event &event)
+void GameOfLife::handleMouseMotion(SDL_Event &event)
 {
     if (dragging)
     {
@@ -97,7 +135,7 @@ void handleMouseMotion(SDL_Event &event)
     }
 }
 
-void handleMouseWheel(SDL_Event &event)
+void GameOfLife::handleMouseWheel(SDL_Event &event)
 {
     float oldZoom = zoom;
     if (event.wheel.y > 0)
@@ -112,7 +150,7 @@ void handleMouseWheel(SDL_Event &event)
     offsetY = (offsetY * zoom) / oldZoom;
 }
 
-void render(SDL_Renderer *renderer, TTF_Font *font)
+void GameOfLife::render(SDL_Renderer *renderer, TTF_Font *font)
 {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
@@ -167,7 +205,7 @@ void render(SDL_Renderer *renderer, TTF_Font *font)
     SDL_RenderPresent(renderer);
 }
 
-int countNeighbors(int x, int y)
+int GameOfLife::countNeighbors(int x, int y)
 {
     int count = 0;
     for (int dx = -1; dx <= 1; ++dx)
@@ -186,7 +224,7 @@ int countNeighbors(int x, int y)
     return count;
 }
 
-void update()
+void GameOfLife::update()
 {
     for (int x = 0; x < GRID_WIDTH; ++x)
     {
@@ -199,7 +237,7 @@ void update()
     grid.swap(nextGrid);
 }
 
-void toggleCell(SDL_Event &event)
+void GameOfLife::toggleCell(SDL_Event &event)
 {
     int x = (event.button.x / zoom + offsetX) / CELL_SIZE;
     int y = (event.button.y / zoom + offsetY) / CELL_SIZE;
@@ -209,7 +247,7 @@ void toggleCell(SDL_Event &event)
     }
 }
 
-void randomize()
+void GameOfLife::randomize()
 {
     srand(time(nullptr));
     for (int x = 0; x < GRID_WIDTH; ++x)
@@ -221,13 +259,13 @@ void randomize()
     }
 }
 
-bool togglePause()
+bool GameOfLife::togglePause()
 {
     paused = !paused;
     return true;
 }
 
-bool clearGrid()
+bool GameOfLife::clearGrid()
 {
     for (int x = 0; x < GRID_WIDTH; ++x)
     {
@@ -239,12 +277,12 @@ bool clearGrid()
     return true;
 }
 
-bool randomizeGrid()
+bool GameOfLife::randomizeGrid()
 {
     randomize();
     return true;
 }
-TTF_Font *loadFont()
+TTF_Font *GameOfLife::loadFont()
 {
 
     // Detect platform and choose the font path
