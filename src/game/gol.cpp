@@ -17,7 +17,7 @@ GameOfLife::GameOfLife()
            { return randomizeGrid(); }},
       }
 {
-    running = true;
+    running = false;
     paused = false;
     zoom = 1.0f;
     offsetX = offsetY = 0;
@@ -126,10 +126,26 @@ void GameOfLife::handleEvents(SDL_Event &event)
 
 void GameOfLife::handleMouseMotion(SDL_Event &event)
 {
+
     if (dragging)
     {
-        offsetX += event.motion.x - lastMouseX;
-        offsetY += event.motion.y - lastMouseY;
+        int xSide = WINDOW_WIDTH / zoom + offsetX;
+        int ySide = WINDOW_HEIGHT / zoom + offsetY;
+
+        int tempXoffset = offsetX - (event.motion.x - lastMouseX);
+        int tempYoffset = offsetY - (event.motion.y - lastMouseY);
+        xSide = WINDOW_WIDTH / zoom + tempXoffset;
+        ySide = WINDOW_HEIGHT / zoom + tempYoffset;
+
+        if (tempXoffset > -1 && xSide <= WINDOW_WIDTH)
+        {
+            offsetX = tempXoffset;
+        }
+        if (tempYoffset > -1 && ySide <= WINDOW_HEIGHT)
+        {
+            offsetY = tempYoffset;
+        }
+
         lastMouseX = event.motion.x;
         lastMouseY = event.motion.y;
     }
@@ -144,7 +160,8 @@ void GameOfLife::handleMouseWheel(SDL_Event &event)
     }
     else if (event.wheel.y < 0)
     {
-        zoom /= 1.1f;
+        float tmp = zoom /= 1.1f;
+        zoom = tmp >= 1.0f ? tmp : 1.0f;
     }
     offsetX = (offsetX * zoom) / oldZoom;
     offsetY = (offsetY * zoom) / oldZoom;

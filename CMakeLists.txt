@@ -92,8 +92,8 @@ target_link_libraries(GameOfLife PRIVATE ${SDL2_LIBS_LIST} ${SDL2_OTHER_LIBS_LIS
 
 # Set linker flags to link statically
 #set_target_properties(GameOfLife PROPERTIES
-#    LINK_FLAGS "-static"
-#)
+#    LINK_FLAGS "-mconsole")
+
 
 # Disabling shared libraries
 #set(BUILD_SHARED_LIBS OFF)
