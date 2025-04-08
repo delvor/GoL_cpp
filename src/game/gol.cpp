@@ -17,8 +17,8 @@ GameOfLife::GameOfLife()
            { return randomizeGrid(); }},
       }
 {
-    running = false;
-    paused = false;
+    running = true;
+    paused = true;
     zoom = 1.0f;
     offsetX = offsetY = 0;
     dragging = false;
